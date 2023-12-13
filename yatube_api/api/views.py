@@ -1,10 +1,10 @@
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, status, filters
 from rest_framework.response import Response
 
 from posts.models import Comment, Follow, Group, Post, User
 from .permissions import AuthorChangeOrUserReadOnly
-from .serializers import CommentSerializer, FollowSerializer, GroupSerializer, PostSerializer
+from .serializers import CommentSerializer, FollowSerializer, \
+    GroupSerializer, PostSerializer
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -47,6 +47,7 @@ class CommentViewSet(viewsets.ModelViewSet):
             status=status.HTTP_400_BAD_REQUEST
         )
 
+
 class FollowViewSet(viewsets.ModelViewSet):
     queryset = Follow.objects.all()
     serializer_class = FollowSerializer
@@ -69,7 +70,7 @@ class FollowViewSet(viewsets.ModelViewSet):
                 following=following
             )
             if user != following and result:
-                serializer=FollowSerializer(obj)
+                serializer = FollowSerializer(obj)
                 return Response(
                     serializer.data,
                     status=status.HTTP_201_CREATED
@@ -78,4 +79,4 @@ class FollowViewSet(viewsets.ModelViewSet):
         return Response(
             data=serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
-            )
+        )
