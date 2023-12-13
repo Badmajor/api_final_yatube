@@ -175,7 +175,6 @@ class TestFollowAPI:
 
         expected_len = user_follows.filter(following=user_2).count()
         response = user_client.get(f'{self.url}?search={user_2.username}')
-        print(response.json(), user_2.username)
         assert len(response.json()) == expected_len, (
             'Проверьте, что для авторизованного пользователя ответ на '
             f'GET-запрос с параметром `search` к `{self.url}` содержит только '
@@ -186,7 +185,6 @@ class TestFollowAPI:
             f'{self.url}?search={another_user.username}'
         )
         expected_len = user_follows.filter(following=another_user).count()
-        print(response.json(), another_user.username)
         assert len(response.json()) == expected_len, (
             'Проверьте, что для авторизованного пользователя ответ на '
             f'GET-запрос с параметром `search` к `{self.url}` содержит только '
