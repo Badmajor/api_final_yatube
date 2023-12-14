@@ -1,7 +1,9 @@
-from rest_framework import viewsets, status, filters
+from rest_framework import viewsets, status, filters, mixins
 from rest_framework.response import Response
 
 from posts.models import Comment, Follow, Group, Post, User
+from rest_framework.viewsets import GenericViewSet
+
 from .permissions import AuthorChangeOrUserReadOnly
 from .serializers import CommentSerializer, FollowSerializer, \
     GroupSerializer, PostSerializer
@@ -34,7 +36,6 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         post = Post.objects.get(pk=kwargs.get('post_id'))
-        print(request.data)
         serializer = CommentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(post=post, author=request.user)
@@ -48,7 +49,9 @@ class CommentViewSet(viewsets.ModelViewSet):
         )
 
 
-class FollowViewSet(viewsets.ModelViewSet):
+class FollowViewSet(
+    mixins.CreateModelMixin, mixins.ListModelMixin, GenericViewSet
+):
     queryset = Follow.objects.all()
     serializer_class = FollowSerializer
     filter_backends = (filters.SearchFilter,)

@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.db.models import UniqueConstraint
 
 User = get_user_model()
 
@@ -41,11 +42,21 @@ class Comment(models.Model):
 
 class Follow(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='folower'
+        User, on_delete=models.CASCADE, related_name='follower'
     )
     following = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='folowing'
+        User, on_delete=models.CASCADE, related_name='following'
     )
 
     class Meta:
-        unique_together = ['user', 'following']
+        constraints = (
+            UniqueConstraint(
+                fields=('user', 'following'),
+                name='user_following_unique'
+            ),
+            # Верно ли использовать это ограничение, просто тесты не проходят.
+            # CheckConstraint(
+            #     check=~Q(user=F('following')),
+            #     name='follow_on_himself'
+            # )
+        )
